@@ -1,0 +1,13 @@
+.main-page {
+    text-align: center;
+  }
+
+.service-button {
+    width: 400px;  /* 버튼 너비 설정 */
+    height: 100px;  /* 버튼 높이 설정 */
+    font-size: 2rem !important;  /* 버튼 텍스트 크기 설정 */
+    color: #ffffff;  /* 텍스트 색상 설정 */
+    background-color: #6d6969;  /* 배경색 설정 */
+    text-align: center;  /* 텍스트 가운데 정렬 */
+    margin: 1rem !important;  /* 버튼 간격 설정 */
+}
