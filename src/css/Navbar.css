@@ -1,5 +1,10 @@
-.Nav-Bar{
-    text-align: center;
-    position: relative;
-    background-color: #d4e7ee;
+.navbar {
+  text-align: center;
+  position: relative;
+  background-color: #d4e7ee;
+}
+
+.navbar--button {
+  border: none;
+  border-radius: 5px;
 }

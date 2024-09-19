@@ -1,10 +1,10 @@
 import React from 'react';
-import '../css/Diet.css';
+import '@css/Diet.css';
 
 function Diet() {
   return (
-    <div className="Diet-Page">
-        <h2>Diet-Page</h2>
+    <div className='Diet-Page'>
+      <h2>Diet-Page</h2>
     </div>
   );
 }

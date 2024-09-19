@@ -1,15 +1,12 @@
 import React from 'react';
-import { Container } from '@mui/material';
-import '../css/Footer.css';
+import '@css/Footer.css';
 
 function Footer() {
   return (
-    <footer className="footer">
-      <Container>
-        <p className="footer-text">
-           개발자: 최준원 | Tel: 010-8028-1909 | Email: sunlift10000@naver.com 
+    <footer className='footer footer--text'>
+        <p className='button button--current'>
+          Home | Health | Diet
         </p>
-      </Container>
     </footer>
   );
 }
