@@ -1,5 +1,5 @@
 import React from 'react';
-import '@css/Health.css';
+import '../css/Health.css';
 
 function Health() {
   return (

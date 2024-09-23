@@ -1,5 +1,5 @@
 import React from 'react';
-import '@css/MyPetInfo.css';
+import '../css/MyPetInfo.css';
 
 function MyPetInfo() {
   return (

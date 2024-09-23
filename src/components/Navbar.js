@@ -1,11 +1,12 @@
 import React from 'react';
-import '@css/Navbar.css';
+import '../css/Navbar.css';
+import { LuDog } from "react-icons/lu"; // 강아지 아이콘
 
 function Navbar() {
   return (
     <div className='navbar'>
-      <h2>강아지 간식 사전</h2>
-      <button className='navbar--button'>강아지(추후 이모티콘 삽입)</button>
+      <h1>강아지 간식 사전</h1>
+      <button className='navbar--button'><LuDog className='dog_icon'/></button>
     </div>
   );
 }
