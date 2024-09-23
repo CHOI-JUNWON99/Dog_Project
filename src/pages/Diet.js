@@ -1,10 +1,18 @@
 import React from 'react';
-import '../css/Diet.css';
+import styled from 'styled-components';
+
+const StyledDietPage = styled.div`
+  text-align: center;
+  position: relative;
+`;
+
 
 function Diet() {
   return (
-    <div className='Diet-Page'>
-      <h2>Diet-Page</h2>
+    <div>
+      <StyledDietPage>
+        <h2>Diet-Page</h2>
+      </StyledDietPage>
     </div>
   );
 }

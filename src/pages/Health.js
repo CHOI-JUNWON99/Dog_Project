@@ -1,10 +1,17 @@
 import React from 'react';
-import '../css/Health.css';
+import styled from 'styled-components';
+
+const StyledHealthPage = styled.div`
+  text-align: center;
+  position: relative;
+`;
 
 function Health() {
   return (
-    <div className='Health-Page'>
-      <h2>Helath Page</h2>
+    <div>
+      <StyledHealthPage>
+        <h2>Helath Page</h2>
+      </StyledHealthPage>
     </div>
   );
 }
