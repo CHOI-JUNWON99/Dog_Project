@@ -5,7 +5,6 @@ import styled from 'styled-components';
 const StyledFooter = styled.footer`
   display: flex;
   width: 100vw;
-  height: 100%;
   padding: 0.5rem;
   margin: 0;
   box-sizing: border-box;
@@ -14,7 +13,10 @@ const StyledFooter = styled.footer`
   justify-content: center;
   justify-items: center;
   align-items: center;
-  position: relative;
+  position: fixed;
+  z-index: 1000;
+  bottom: 0;
+  left: 0;
 `;
 
 const StyledServiceButton = styled.button`

@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { CiSearch } from 'react-icons/ci';
 import styled from 'styled-components';
 import getSnackList from '../components/SnackList';
+import { FixedSizeList as List } from 'react-window';
 
 const MainPageContainer = styled.div`
+  min-height: calc(100vh - 100px); /* 100vh에서 Footer의 높이를 뺀 값 */
   margin-top: 80px;
   text-align: center;
   justify-content: center;
@@ -58,14 +60,14 @@ const SelectButtonSection = styled.section`
   }
 `;
 
-const SnackListSection = styled.section`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  width: 100%;
-  padding-bottom: 1.5rem;
-`;
+// const SnackListSection = styled.section`
+//   display: flex;
+//   flex-direction: column;
+//   align-items: center;
+//   text-align: center;
+//   width: 100%;
+//   padding-bottom: 1.5rem;
+// `;
 
 const SnackItem = styled.div`
   display: flex;
@@ -170,6 +172,30 @@ function MainPage() {
     return <p>Loading...</p>;
   }
 
+  // 가상 스크롤을 위한 항목 렌더링 함수
+  const renderSnackItem = ({ index, style }) => {
+    const snack = filteredSnacks[index];
+
+    const itemStyle = {
+      ...style,
+      margin: '0px 0px',
+    };
+
+    return (
+      <SnackItem
+        key={snack.id}
+        style={itemStyle}
+        isUnsafe={snack.category === 'unsafe'}
+      >
+        <img src={snack.img} alt={snack.name} />
+        <div className='snack-info'>
+          <h3>{snack.name}</h3>
+          <p>{snack.shortDescription}</p>
+        </div>
+      </SnackItem>
+    );
+  };
+
   return (
     <MainPageContainer>
       <SearchSection>
@@ -197,18 +223,18 @@ function MainPage() {
           절대 먹으면 안되는 간식
         </button>
       </SelectButtonSection>
-      {/* 필터링된 간식 목록을 표시 */}
-      <SnackListSection>
-        {filteredSnacks.map((snack) => (
-          <SnackItem key={snack.id} isUnsafe={snack.category === 'unsafe'}>
-            <img src={snack.img} alt={snack.name} />
-            <div className='snack-info'>
-              <h3>{snack.name}</h3>
-              <p>{snack.shortDescription}</p>
-            </div>
-          </SnackItem>
-        ))}
-      </SnackListSection>
+
+      <div style={{ display: 'flex', justifyContent: 'center' }}>
+        <List
+          width={320}
+          height={720}
+          itemCount={filteredSnacks.length}
+          itemSize={90}
+          style={{ overflowX: 'hidden' }}
+        >
+          {renderSnackItem}
+        </List>
+      </div>
     </MainPageContainer>
   );
 }
