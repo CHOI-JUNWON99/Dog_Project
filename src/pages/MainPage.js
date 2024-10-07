@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { CiSearch } from "react-icons/ci"; // 검색 아이콘
+import { CiSearch } from 'react-icons/ci';
 import styled from 'styled-components';
-import snackData from '../components/SnackList'; // SnackList에서 데이터 가져오기
+import getSnackList from '../components/SnackList';
 
 const MainPageContainer = styled.div`
+  margin-top: 80px;
   text-align: center;
   justify-content: center;
   align-items: center;
@@ -52,8 +53,8 @@ const SelectButtonSection = styled.section`
   }
 
   .selected {
-    background-color: #add8e6; 
-    color: white; 
+    background-color: #add8e6;
+    color: white;
   }
 `;
 
@@ -61,6 +62,7 @@ const SnackListSection = styled.section`
   display: flex;
   flex-direction: column;
   align-items: center;
+  text-align: center;
   width: 100%;
   padding-bottom: 1.5rem;
 `;
@@ -74,25 +76,34 @@ const SnackItem = styled.div`
   border-radius: 8px;
   width: 100%;
   max-width: 300px;
-  background-color: #e1ecee; 
+  background-color: #e1ecee;
   cursor: pointer;
 
   &:hover {
-    background-color: #e7eeee; 
+    background-color: #e7eeee;
   }
 
   img {
-    max-width: 80px; /* 이미지 크기 조정 */
+    max-width: 80px;
     height: auto;
     border-radius: 10px;
     object-fit: contain;
     margin-right: 15px;
   }
 
+  .snack-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: left;
+    width: 180px;
+  }
+
   h3 {
     margin: 0;
     font-size: 1rem;
     font-weight: bold;
+    color: ${(props) => (props.isUnsafe ? 'red' : '#000')};
   }
 
   p {
@@ -103,49 +114,93 @@ const SnackItem = styled.div`
 `;
 
 function MainPage() {
+  const [allSnacks, setAllSnacks] = useState([]); // 원본 간식 데이터
   const [filteredSnacks, setFilteredSnacks] = useState([]); // 필터링된 간식 상태
   const [selectedButton, setSelectedButton] = useState('safe');
+  const [search, setSearch] = useState('');
+  const [loading, setLoading] = useState(true); // 데이터를 로딩 중인지 확인하는 상태 추가
 
   // '먹어도 되는 간식' 버튼 클릭 시 필터링 함수
   const handleSafeSnacks = () => {
-    const safeSnacks = snackData.filter(snack => snack.category === 'safe');
+    const safeSnacks = allSnacks.filter((snack) => snack.category === 'safe');
     setFilteredSnacks(safeSnacks);
     setSelectedButton('safe');
   };
 
   // '절대 먹으면 안되는 간식' 버튼 클릭 시 필터링 함수
   const handleUnsafeSnacks = () => {
-    const unsafeSnacks = snackData.filter(snack => snack.category === 'unsafe');
+    const unsafeSnacks = allSnacks.filter(
+      (snack) => snack.category === 'unsafe'
+    );
     setFilteredSnacks(unsafeSnacks);
     setSelectedButton('unsafe');
   };
 
-  const getSafeSnacks = () => {
-    const safeSnacks = snackData.filter(snack => snack.category === 'safe');
-    setFilteredSnacks(safeSnacks);
-    setSelectedButton('safe');
+  // 검색기능 구현
+  const handleSearch = (e) => {
+    setSearch(e.target.value);
+
+    if (e.target.value === '') {
+      handleSafeSnacks(); // 검색 필드가 비어 있으면 safe 간식
+    } else {
+      const filtered = allSnacks.filter(
+        (snack) =>
+          snack.name.toLowerCase().includes(e.target.value.toLowerCase()) ||
+          snack.shortDescription
+            .toLowerCase()
+            .includes(e.target.value.toLowerCase())
+      );
+      setFilteredSnacks(filtered);
+    }
   };
 
   // 컴포넌트가 처음 렌더링될 때 '먹어도 되는 간식'을 기본으로 표시
   useEffect(() => {
-    getSafeSnacks();
+    async function fetchData() {
+      const data = await getSnackList(); // snackData를 Promise로 받아오기
+      setAllSnacks(data); // 원본 데이터를 저장
+      setFilteredSnacks(data.filter((snack) => snack.category === 'safe')); // 먹어도 되는 간식만 표시
+      setLoading(false); // 로딩 완료
+    }
+    fetchData();
   }, []);
+
+  // 로딩 중일 때 로딩 메시지 표시
+  if (loading) {
+    return <p>Loading...</p>;
+  }
 
   return (
     <MainPageContainer>
       <SearchSection>
-        <input placeholder='강아지가 먹어도 되는지 간식을 검색해보세요!' />
-        <button> <CiSearch /> </button>
+        <input
+          placeholder='강아지가 먹어도 되는지 간식을 검색해보세요!'
+          value={search}
+          onChange={handleSearch}
+        />
+        <button>
+          <CiSearch />
+        </button>
       </SearchSection>
       <h2>강아지 간식 정보</h2>
       <SelectButtonSection>
-        <button onClick={handleSafeSnacks} className={selectedButton === 'safe' ? 'selected' : ''}>먹어도 되는 간식</button>
-        <button onClick={handleUnsafeSnacks} className={selectedButton === 'unsafe' ? 'selected' : ''}>절대 먹으면 안되는 간식</button>
+        <button
+          onClick={handleSafeSnacks}
+          className={selectedButton === 'safe' ? 'selected' : ''}
+        >
+          먹어도 되는 간식
+        </button>
+        <button
+          onClick={handleUnsafeSnacks}
+          className={selectedButton === 'unsafe' ? 'selected' : ''}
+        >
+          절대 먹으면 안되는 간식
+        </button>
       </SelectButtonSection>
       {/* 필터링된 간식 목록을 표시 */}
       <SnackListSection>
-        {filteredSnacks.map(snack => (
-          <SnackItem key={snack.id}>
+        {filteredSnacks.map((snack) => (
+          <SnackItem key={snack.id} isUnsafe={snack.category === 'unsafe'}>
             <img src={snack.img} alt={snack.name} />
             <div className='snack-info'>
               <h3>{snack.name}</h3>

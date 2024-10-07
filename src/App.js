@@ -8,7 +8,6 @@ import Diet from './pages/Diet';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import MyPetInfo from './components/MyPetInfo';
-// SnackList는 컴포넌트가 아니므로 import할 필요가 없다.
 
 function App() {
   return (

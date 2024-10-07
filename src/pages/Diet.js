@@ -6,7 +6,6 @@ const StyledDietPage = styled.div`
   position: relative;
 `;
 
-
 function Diet() {
   return (
     <div>

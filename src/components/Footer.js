@@ -28,13 +28,12 @@ const StyledServiceButton = styled.button`
   border-radius: 5px;
   cursor: pointer;
 
-  &:hover{
+  &:hover {
     background-color: #f0f4f5;
   }
 `;
 
 function Footer() {
-  
   const navigate = useNavigate();
   const handleNavigation = (path) => {
     navigate(path);
@@ -42,9 +41,15 @@ function Footer() {
 
   return (
     <StyledFooter>
-        <StyledServiceButton onClick={() => handleNavigation('/')}>메인</StyledServiceButton>
-        <StyledServiceButton onClick={() => handleNavigation('/Diet')}>식단</StyledServiceButton>
-        <StyledServiceButton onClick={() => handleNavigation('/Health')}>건강</StyledServiceButton>
+      <StyledServiceButton onClick={() => handleNavigation('/')}>
+        메인
+      </StyledServiceButton>
+      <StyledServiceButton onClick={() => handleNavigation('/Diet')}>
+        식단
+      </StyledServiceButton>
+      <StyledServiceButton onClick={() => handleNavigation('/Health')}>
+        건강
+      </StyledServiceButton>
     </StyledFooter>
   );
 }
