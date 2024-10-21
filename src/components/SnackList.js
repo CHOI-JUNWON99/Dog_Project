@@ -305,6 +305,6 @@ export default function getSnackList() {
   return new Promise((resolve) => {
     setTimeout(() => {
       resolve(snackData);
-    }, 1000); // 1초 지연 후 데이터 반환
+    }, 500); // 1초 지연 후 데이터 반환
   });
 }

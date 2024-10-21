@@ -12,6 +12,7 @@ const MainPageContainer = styled.div`
   align-items: center;
   position: relative;
   background-color: #f0f9fc;
+  padding-bottom: 60px; /* Footer와의 간격을 위해 여유 공간 추가 */
 `;
 
 const SearchSection = styled.section`
@@ -60,15 +61,6 @@ const SelectButtonSection = styled.section`
   }
 `;
 
-// const SnackListSection = styled.section`
-//   display: flex;
-//   flex-direction: column;
-//   align-items: center;
-//   text-align: center;
-//   width: 100%;
-//   padding-bottom: 1.5rem;
-// `;
-
 const SnackItem = styled.div`
   display: flex;
   align-items: center;
@@ -116,11 +108,30 @@ const SnackItem = styled.div`
 `;
 
 function MainPage() {
-  const [allSnacks, setAllSnacks] = useState([]); // 원본 간식 데이터
-  const [filteredSnacks, setFilteredSnacks] = useState([]); // 필터링된 간식 상태
+  const [allSnacks, setAllSnacks] = useState([]);
+  const [filteredSnacks, setFilteredSnacks] = useState([]);
   const [selectedButton, setSelectedButton] = useState('safe');
   const [search, setSearch] = useState('');
-  const [loading, setLoading] = useState(true); // 데이터를 로딩 중인지 확인하는 상태 추가
+  const [loading, setLoading] = useState(true); 
+  const [listHeight, setListHeight] = useState(window.innerHeight * 0.75);
+  const [listWidth, setListWidth] = useState(320); 
+
+  // 화면 크기에 따라 리스트 크기를 조정하는 함수
+  const updateListSize = () => {
+    const newHeight = window.innerHeight * 0.75; // 화면 높이의 75%로
+    const newWidth = window.innerWidth < 600 ? window.innerWidth - 40 : 320; // 화면 너비가 작을 때 동적으로 변경
+    setListHeight(newHeight);
+    setListWidth(newWidth);
+  };
+
+  // 컴포넌트가 마운트되면 resize 이벤트 리스너 등록
+  useEffect(() => {
+    window.addEventListener('resize', updateListSize);
+    updateListSize(); // 초기 사이즈 설정
+    return () => {
+      window.removeEventListener('resize', updateListSize);
+    };
+  }, []);
 
   // '먹어도 되는 간식' 버튼 클릭 시 필터링 함수
   const handleSafeSnacks = () => {
@@ -131,9 +142,7 @@ function MainPage() {
 
   // '절대 먹으면 안되는 간식' 버튼 클릭 시 필터링 함수
   const handleUnsafeSnacks = () => {
-    const unsafeSnacks = allSnacks.filter(
-      (snack) => snack.category === 'unsafe'
-    );
+    const unsafeSnacks = allSnacks.filter((snack) => snack.category === 'unsafe');
     setFilteredSnacks(unsafeSnacks);
     setSelectedButton('unsafe');
   };
@@ -148,9 +157,7 @@ function MainPage() {
       const filtered = allSnacks.filter(
         (snack) =>
           snack.name.toLowerCase().includes(e.target.value.toLowerCase()) ||
-          snack.shortDescription
-            .toLowerCase()
-            .includes(e.target.value.toLowerCase())
+          snack.shortDescription.toLowerCase().includes(e.target.value.toLowerCase())
       );
       setFilteredSnacks(filtered);
     }
@@ -160,14 +167,14 @@ function MainPage() {
   useEffect(() => {
     async function fetchData() {
       const data = await getSnackList(); // snackData를 Promise로 받아오기
-      setAllSnacks(data); // 원본 데이터를 저장
-      setFilteredSnacks(data.filter((snack) => snack.category === 'safe')); // 먹어도 되는 간식만 표시
-      setLoading(false); // 로딩 완료
+      setAllSnacks(data);
+      setFilteredSnacks(data.filter((snack) => snack.category === 'safe')); 
+      setLoading(false); 
+      console.log('전체 간식 데이터:', data); // 전체 간식 데이터가 제대로 들어오는지 확인
     }
     fetchData();
   }, []);
 
-  // 로딩 중일 때 로딩 메시지 표시
   if (loading) {
     return <p>Loading...</p>;
   }
@@ -182,11 +189,7 @@ function MainPage() {
     };
 
     return (
-      <SnackItem
-        key={snack.id}
-        style={itemStyle}
-        isUnsafe={snack.category === 'unsafe'}
-      >
+      <SnackItem key={snack.id} style={itemStyle} isUnsafe={snack.category === 'unsafe'}>
         <img src={snack.img} alt={snack.name} />
         <div className='snack-info'>
           <h3>{snack.name}</h3>
@@ -195,6 +198,10 @@ function MainPage() {
       </SnackItem>
     );
   };
+
+  console.log('현재 필터된 간식:', filteredSnacks);
+  console.log('현재 필터된 간식 갯수:', filteredSnacks.length);
+  
 
   return (
     <MainPageContainer>
@@ -210,24 +217,18 @@ function MainPage() {
       </SearchSection>
       <h2>강아지 간식 정보</h2>
       <SelectButtonSection>
-        <button
-          onClick={handleSafeSnacks}
-          className={selectedButton === 'safe' ? 'selected' : ''}
-        >
+        <button onClick={handleSafeSnacks} className={selectedButton === 'safe' ? 'selected' : ''}>
           먹어도 되는 간식
         </button>
-        <button
-          onClick={handleUnsafeSnacks}
-          className={selectedButton === 'unsafe' ? 'selected' : ''}
-        >
+        <button onClick={handleUnsafeSnacks} className={selectedButton === 'unsafe' ? 'selected' : ''}>
           절대 먹으면 안되는 간식
         </button>
       </SelectButtonSection>
 
-      <div style={{ display: 'flex', justifyContent: 'center' }}>
+      <div style={{ display: 'flex', justifyContent: 'center'}}>
         <List
-          width={320}
-          height={720}
+          width={listWidth} // 동적으로 설정
+          height={listHeight} // 동적으로 설정
           itemCount={filteredSnacks.length}
           itemSize={90}
           style={{ overflowX: 'hidden' }}
