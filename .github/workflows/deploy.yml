@@ -34,16 +34,18 @@ jobs:
         with:
           aws-region: ap-northeast-2
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-access-key-id: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-      - name: S3 기존 파일들 전체 삭제  # //뒤에 S3 버킷명 적기
+      - name: S3 기존 파일들 전체 삭제 # //뒤에 S3 버킷명 적기
         run: aws s3 rm --recursive s3://dogsnackinfo
 
       - name: S3에 빌드된 파일 업로드하기
         run: aws s3 cp ./build s3://dogsnackinfo/ --recursive
 
       - name: Cloudfront 캐시 무효화
-        run: aws cloudfront create-invalidation --distribution-id E27HZBOHMBCFR2 --paths "/*" 
+        run:
+          aws cloudfront create-invalidation --distribution-id E27HZBOHMBCFR2
+          --paths "/*"
 
       - name: S3에 빌드된 파일 업로드하기
         run: aws s3 cp ./build s3://dogsnackinfo/ --recursive
