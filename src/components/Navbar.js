@@ -1,64 +1,90 @@
 import React from 'react';
-import { LuDog } from 'react-icons/lu'; // 강아지 아이콘
+import { LuDog } from 'react-icons/lu';
+import { CiSearch } from 'react-icons/ci';
+import { FiUser } from 'react-icons/fi';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 
+const Container = styled.div`
+  display: flex;
+  justify-content: center;
+  padding: 0 20px;
+  box-sizing: border-box;
+`;
+
+const ContentWrapper = styled.div`
+  width: 100%;
+  max-width: 600px;
+`;
+
 const StyledNavbar = styled.div`
   display: flex;
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 1000;
-  justify-content: center;
-  justify-items: center;
-  text-align: center;
   align-items: center;
-  background-color: #d4e7ee;
-  width: 100vw;
-  gap: 1rem;
+  justify-content: space-between;
+  width: 100%;
+  height: 60px;
+  background-color: #333;
+  color: white;
+  padding: 0 20px;
+  box-sizing: border-box;
+  z-index: 1000;
 `;
 
-const StyledLink = styled(Link)`
-  color: black;
+const Logo = styled(Link)`
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: white;
   text-decoration: none;
-  cursor: pointer;
 `;
 
-const StyledNavbarButton = styled.button`
+const SearchContainer = styled.div`
   display: flex;
-  border: none;
+  align-items: center;
+  background-color: #fff;
   border-radius: 5px;
-  width: 35px;
-  height: 35px;
-  background-color: #d4e7ee;
-  cursor: pointer;
+  padding: 5px 10px;
+  width: 300px;
 
-  /* 기존 .navbar--button:hover 효과 추가 */
-  &:hover {
-    background-color: #f0f4f5;
+  input {
+    border: none;
+    outline: none;
+    width: 100%;
+    padding-left: 5px;
   }
 
-  /* 기존 .dog_icon 스타일 추가 */
-  .dog_icon {
-    width: 35px;
-    height: 35px;
+  .search-icon {
+    color: #333;
+  }
+`;
+
+const IconsContainer = styled.div`
+  display: flex;
+  gap: 15px;
+  align-items: center;
+
+  .icon {
+    font-size: 1.2rem;
+    cursor: pointer;
   }
 `;
 
 function Navbar() {
-  const handleScrollToTop = () => {
-    window.scrollTo(0, 0);
-  };
-
   return (
-    <StyledNavbar>
-      <StyledLink to='/' onClick={handleScrollToTop}>
-        <h1>강아지 간식 사전</h1>
-      </StyledLink>
-      <StyledNavbarButton>
-        <LuDog className='dog_icon' />
-      </StyledNavbarButton>
-    </StyledNavbar>
+    <Container>
+      <ContentWrapper>
+        <StyledNavbar>
+          <Logo to='/'>Dog Snack</Logo>
+          <SearchContainer>
+            <CiSearch className='search-icon' />
+            <input type='text' placeholder='검색어를 입력해 주세요' />
+          </SearchContainer>
+          <IconsContainer>
+            <LuDog className='icon' />
+            <FiUser className='icon' />
+          </IconsContainer>
+        </StyledNavbar>
+      </ContentWrapper>
+    </Container>
   );
 }
 
