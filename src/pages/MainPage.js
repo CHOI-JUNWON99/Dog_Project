@@ -3,6 +3,7 @@ import { CiSearch } from 'react-icons/ci';
 import styled from 'styled-components';
 import getSnackList from '../components/SnackList';
 import { FixedSizeList as List } from 'react-window';
+import Loading from '../components/Loading';
 
 const MainPageContainer = styled.div`
   min-height: calc(100vh - 100px); /* 100vh에서 Footer의 높이를 뺀 값 */
@@ -60,15 +61,6 @@ const SelectButtonSection = styled.section`
   }
 `;
 
-// const SnackListSection = styled.section`
-//   display: flex;
-//   flex-direction: column;
-//   align-items: center;
-//   text-align: center;
-//   width: 100%;
-//   padding-bottom: 1.5rem;
-// `;
-
 const SnackItem = styled.div`
   display: flex;
   align-items: center;
@@ -120,7 +112,7 @@ function MainPage() {
   const [filteredSnacks, setFilteredSnacks] = useState([]); // 필터링된 간식 상태
   const [selectedButton, setSelectedButton] = useState('safe');
   const [search, setSearch] = useState('');
-  const [loading, setLoading] = useState(true); // 데이터를 로딩 중인지 확인하는 상태 추가
+  const [loading, setLoading] = useState(true);
 
   // '먹어도 되는 간식' 버튼 클릭 시 필터링 함수
   const handleSafeSnacks = () => {
@@ -167,10 +159,7 @@ function MainPage() {
     fetchData();
   }, []);
 
-  // 로딩 중일 때 로딩 메시지 표시
-  if (loading) {
-    return <p>Loading...</p>;
-  }
+  if (loading) return <Loading />;
 
   // 가상 스크롤을 위한 항목 렌더링 함수
   const renderSnackItem = ({ index, style }) => {
