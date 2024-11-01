@@ -1,23 +1,29 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { CiSearch } from 'react-icons/ci';
 import styled from 'styled-components';
 import getSnackList from '../components/SnackList';
-import { FixedSizeList as List } from 'react-window';
 import Loading from '../components/Loading';
 
 const MainPageContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-height: calc(100vh - 100px); /* 100vh에서 Footer의 높이를 뺀 값 */
+  min-height: calc(100vh - 100px);
   text-align: center;
   background-color: #fffffb;
-  padding-bottom: 60px; /* Footer와의 간격을 위해 여유 공간 추가 */
+  padding-bottom: 60px;
   max-width: 600px;
-  margin: 0 auto; /* 가로 중앙 정렬 */
+  margin: 0 auto;
   box-sizing: border-box;
   border-left: 2px solid #e0e0e0;
   border-right: 2px solid #e0e0e0;
+
+  @media (max-width: 425px) {
+    border-left: none;
+    border-right: none;
+    width: 100vw;
+    padding: 0;
+  }
 `;
 
 const StyledMainPage = styled.div`
@@ -72,69 +78,54 @@ const SelectButtonSection = styled.section`
   }
 `;
 
+const SnackGrid = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  padding: 1rem;
+  width: 100%;
+  max-width: 550px;
+  margin-left: 20px;
+  margin-right: 20px;
+`;
+
 const SnackItem = styled.div`
   display: flex;
+  flex-direction: column;
   align-items: center;
-  border: 1px solid #ddd;
   padding: 10px;
-  margin: 10px 0;
-  border-radius: 2px;
-  width: calc(100% - 20px);
-  background-color: #e1ecee;
+  border-radius: 8px;
+  background-color: #eff9f5;
   cursor: pointer;
   box-sizing: border-box;
+  text-align: center;
 
   &:hover {
     background-color: #e7eeee;
   }
 
   img {
-    max-width: 80px;
-    height: auto;
-    border-radius: 10px;
-    object-fit: contain;
-    margin-right: 15px;
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 8px;
   }
 
   .snack-info {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    text-align: left;
-    flex: 1;
+    margin-top: 10px;
   }
 
   h3 {
-    margin: 0;
+    margin: 5px 0 0;
     font-size: 1rem;
     font-weight: bold;
     color: ${(props) => (props.$isUnsafe ? 'red' : '#000')};
   }
 
   p {
-    margin: 5px 0 0 10px;
+    margin: 5px 0;
     font-size: 0.85rem;
     color: #333;
-  }
-`;
-
-const SnackListContainer = styled.div`
-  display: flex;
-  justify-content: center;
-`;
-
-const ListContainer = styled.div`
-  width: ${(props) => props.width}px;
-  height: ${(props) => props.height}px;
-  overflow-y: auto; /* 세로 스크롤만 활성화 */
-  overflow-x: hidden; /* 좌우 스크롤 제거 */
-  cursor: grab;
-  user-select: none;
-  -ms-overflow-style: none; /* IE & Edge */
-  scrollbar-width: none; /* Firefox */
-
-  &::-webkit-scrollbar {
-    display: none; /* Chrome, Safari, Edge */
   }
 `;
 
@@ -144,68 +135,10 @@ function MainPage() {
   const [selectedButton, setSelectedButton] = useState('safe');
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
-  const [listHeight, setListHeight] = useState(window.innerHeight * 0.75);
-  const [listWidth, setListWidth] = useState(320);
-  const listRef = useRef(null);
-  const isDragging = useRef(false);
-  const startY = useRef(0);
-  const scrollTop = useRef(0);
 
-  // 화면 크기에 따라 리스트 크기를 조정하는 함수
-  const updateListSize = () => {
-    const newHeight = window.innerHeight * 0.75; // 화면 높이의 75%로
-    const newWidth = window.innerWidth < 600 ? window.innerWidth - 40 : 320; // 화면 너비가 작을 때 동적으로 변경
-    setListHeight(newHeight);
-    setListWidth(newWidth);
-  };
-
-  // 컴포넌트가 마운트되면 resize 이벤트 리스너 등록
-  useEffect(() => {
-    window.addEventListener('resize', updateListSize);
-    updateListSize(); // 초기 사이즈 설정
-    return () => {
-      window.removeEventListener('resize', updateListSize);
-    };
-  }, []);
-
-  // '먹어도 되는 간식' 버튼 클릭 시 필터링 함수
-  const handleSafeSnacks = () => {
-    const safeSnacks = allSnacks.filter((snack) => snack.category === 'safe');
-    setFilteredSnacks(safeSnacks);
-    setSelectedButton('safe');
-  };
-
-  // '절대 먹으면 안되는 간식' 버튼 클릭 시 필터링 함수
-  const handleUnsafeSnacks = () => {
-    const unsafeSnacks = allSnacks.filter(
-      (snack) => snack.category === 'unsafe'
-    );
-    setFilteredSnacks(unsafeSnacks);
-    setSelectedButton('unsafe');
-  };
-
-  // 검색기능 구현
-  const handleSearch = (e) => {
-    setSearch(e.target.value);
-
-    if (e.target.value === '') {
-      handleSafeSnacks(); // 검색 필드가 비어 있으면 safe 간식
-    } else {
-      const filtered = allSnacks.filter(
-        (snack) =>
-          snack.name.toLowerCase().includes(e.target.value.toLowerCase()) ||
-          snack.shortDescription
-            .toLowerCase()
-            .includes(e.target.value.toLowerCase())
-      );
-      setFilteredSnacks(filtered);
-    }
-  };
-
-  // 컴포넌트가 처음 렌더링될 때 '먹어도 되는 간식'을 기본으로 표시
   useEffect(() => {
     async function fetchData() {
-      const data = await getSnackList(); // snackData를 Promise로 받아오기
+      const data = await getSnackList();
       setAllSnacks(data);
       setFilteredSnacks(data.filter((snack) => snack.category === 'safe'));
       setLoading(false);
@@ -213,51 +146,39 @@ function MainPage() {
     fetchData();
   }, []);
 
+  const handleSafeSnacks = () => {
+    setFilteredSnacks(allSnacks.filter((snack) => snack.category === 'safe'));
+    setSelectedButton('safe');
+    setSearch(''); // Reset search when switching categories
+  };
+
+  const handleUnsafeSnacks = () => {
+    setFilteredSnacks(allSnacks.filter((snack) => snack.category === 'unsafe'));
+    setSelectedButton('unsafe');
+    setSearch(''); // Reset search when switching categories
+  };
+
+  const handleSearch = (e) => {
+    const searchTerm = e.target.value.toLowerCase();
+    setSearch(searchTerm);
+
+    if (searchTerm === '') {
+      // Reset to current category when search is cleared
+      setFilteredSnacks(
+        allSnacks.filter((snack) => snack.category === selectedButton)
+      );
+    } else {
+      const filtered = allSnacks.filter(
+        (snack) =>
+          snack.category === selectedButton &&
+          (snack.name.toLowerCase().includes(searchTerm) ||
+            snack.shortDescription.toLowerCase().includes(searchTerm))
+      );
+      setFilteredSnacks(filtered);
+    }
+  };
+
   if (loading) return <Loading />;
-
-  const handleMouseDown = (e) => {
-    isDragging.current = true;
-    startY.current = e.clientY;
-    scrollTop.current = listRef.current.scrollTop;
-    document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseup', handleMouseUp);
-  };
-
-  const handleMouseMove = (e) => {
-    if (!isDragging.current) return;
-    const delta = e.clientY - startY.current;
-    listRef.current.scrollTop = scrollTop.current - delta;
-  };
-
-  const handleMouseUp = () => {
-    isDragging.current = false;
-    document.removeEventListener('mousemove', handleMouseMove);
-    document.removeEventListener('mouseup', handleMouseUp);
-  };
-
-  // 가상 스크롤을 위한 항목 렌더링 함수
-  const renderSnackItem = ({ index, style }) => {
-    const snack = filteredSnacks[index];
-
-    const itemStyle = {
-      ...style,
-      margin: '0px 0px',
-    };
-
-    return (
-      <SnackItem
-        key={snack.id}
-        style={itemStyle}
-        $isUnsafe={snack.category === 'unsafe'}
-      >
-        <img src={snack.img} alt={snack.name} />
-        <div className='snack-info'>
-          <h3>{snack.name}</h3>
-          <p>{snack.shortDescription}</p>
-        </div>
-      </SnackItem>
-    );
-  };
 
   return (
     <MainPageContainer>
@@ -289,25 +210,17 @@ function MainPage() {
         </SelectButtonSection>
       </StyledMainPage>
 
-      <SnackListContainer>
-        <ListContainer
-          ref={listRef}
-          onMouseDown={handleMouseDown}
-          width={listWidth}
-          height={listHeight}
-        >
-          <List
-            width={listWidth}
-            height={listHeight}
-            itemCount={filteredSnacks.length}
-            itemSize={90}
-            outerRef={listRef}
-            style={{ overflowX: 'hidden', overflowY: 'hidden' }}
-          >
-            {renderSnackItem}
-          </List>
-        </ListContainer>
-      </SnackListContainer>
+      <SnackGrid>
+        {filteredSnacks.map((snack) => (
+          <SnackItem key={snack.id} $isUnsafe={snack.category === 'unsafe'}>
+            <img src={snack.img} alt={snack.name} />
+            <div className='snack-info'>
+              <h3>{snack.name}</h3>
+              <p>{snack.shortDescription}</p>
+            </div>
+          </SnackItem>
+        ))}
+      </SnackGrid>
     </MainPageContainer>
   );
 }

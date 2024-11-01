@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import getSnackList from '../components/SnackList';
-import { FixedSizeList as List } from 'react-window';
+import Loading from '../components/Loading';
 
 const HealthPageContainer = styled.div`
   display: flex;
@@ -10,11 +10,18 @@ const HealthPageContainer = styled.div`
   min-height: calc(100vh - 100px);
   background-color: #fffffb;
   padding-bottom: 60px;
-  margin: 0 auto;
   max-width: 600px;
+  margin: 0 auto;
   box-sizing: border-box;
   border-left: 2px solid #e0e0e0;
   border-right: 2px solid #e0e0e0;
+
+  @media (max-width: 425px) {
+    border-left: none;
+    border-right: none;
+    width: 100vw;
+    padding: 0;
+  }
 `;
 
 const StyledHealthPage = styled.div`
@@ -22,51 +29,55 @@ const StyledHealthPage = styled.div`
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding-bottom: 60px;
-  margin-bottom: 20px;
+  padding-bottom: 20px;
+`;
+
+const SnackGrid = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  padding: 1rem;
+  width: 100%;
+  max-width: 550px;
+  margin-left: 20px;
+  margin-right: 20px;
 `;
 
 const SnackItem = styled.div`
   display: flex;
+  flex-direction: column;
   align-items: center;
-  border: 1px solid #ddd;
   padding: 10px;
-  margin: 10px 0;
-  border-radius: 2px;
-  width: calc(100% - 20px);
-  background-color: #e1ecee;
+  border-radius: 8px;
+  background-color: #eff9f5;
   cursor: pointer;
   box-sizing: border-box;
+  text-align: center;
 
   &:hover {
     background-color: #e7eeee;
   }
 
   img {
-    max-width: 80px;
-    height: auto;
-    border-radius: 10px;
-    object-fit: contain;
-    margin-right: 15px;
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 8px;
   }
 
   .snack-info {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    text-align: left;
-    flex: 1;
+    margin-top: 10px;
   }
 
   h3 {
-    margin: 0;
+    margin: 5px 0 0;
     font-size: 1rem;
     font-weight: bold;
     color: ${(props) => (props.$isUnsafe ? 'red' : '#000')};
   }
 
   p {
-    margin: 5px 0 0 10px;
+    margin: 5px 0;
     font-size: 0.85rem;
     color: #333;
   }
@@ -75,34 +86,27 @@ const SnackItem = styled.div`
 function Health() {
   const [selectedSymptom, setSelectedSymptom] = useState('');
   const [snacks, setSnacks] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchData() {
       const data = await getSnackList();
       setSnacks(data);
+      setLoading(false);
     }
     fetchData();
   }, []);
 
+  // 선택된 증상에 맞는 safe한 간식만 필터링
   const filterSnackBySymptom = () => {
-    if (!selectedSymptom) return snacks;
-    return snacks.filter((snack) => snack.benefits.includes(selectedSymptom));
-  };
-
-  // 가상 스크롤을 위한 항목 렌더링 함수
-  const renderSnackItem = ({ index, style }) => {
-    const snack = filterSnackBySymptom()[index];
-
-    return (
-      <SnackItem key={snack.id} style={style}>
-        <img src={snack.img} alt={snack.name} />
-        <div className='snack-info'>
-          <h3>{snack.name}</h3>
-          <p>{snack.shortDescription}</p>
-        </div>
-      </SnackItem>
+    return snacks.filter(
+      (snack) =>
+        snack.category === 'safe' &&
+        (selectedSymptom === '' || snack.benefits.includes(selectedSymptom))
     );
   };
+
+  if (loading) return <Loading />;
 
   return (
     <HealthPageContainer>
@@ -120,17 +124,17 @@ function Health() {
         </select>
       </StyledHealthPage>
 
-      <div style={{ display: 'flex', justifyContent: 'center' }}>
-        <List
-          width={320}
-          height={720}
-          itemCount={filterSnackBySymptom().length}
-          itemSize={90}
-          style={{ overflowX: 'hidden' }}
-        >
-          {renderSnackItem}
-        </List>
-      </div>
+      <SnackGrid>
+        {filterSnackBySymptom().map((snack) => (
+          <SnackItem key={snack.id} $isUnsafe={snack.category === 'unsafe'}>
+            <img src={snack.img} alt={snack.name} />
+            <div className='snack-info'>
+              <h3>{snack.name}</h3>
+              <p>{snack.shortDescription}</p>
+            </div>
+          </SnackItem>
+        ))}
+      </SnackGrid>
     </HealthPageContainer>
   );
 }

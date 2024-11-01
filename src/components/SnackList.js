@@ -330,15 +330,6 @@ const snackData = [
   },
   {
     id: 32,
-    name: '생마늘',
-    category: 'unsafe',
-    img: '../Snack/RawGarlic.png',
-    benefits: [],
-    shortDescription: '적혈구 손상을 일으킬 수 있습니다.',
-    detailedDescription: '적혈구를 파괴하는 성분이 있어 해롭습니다.',
-  },
-  {
-    id: 32,
     name: '라임',
     category: 'unsafe',
     img: '../Snack/Lime.png',

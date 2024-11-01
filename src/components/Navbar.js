@@ -10,6 +10,13 @@ const Container = styled.div`
   justify-content: center;
   padding: 0 20px;
   box-sizing: border-box;
+
+  @media (max-width: 425px) {
+    border-left: none;
+    border-right: none;
+    width: 100vw;
+    padding: 0;
+  }
 `;
 
 const ContentWrapper = styled.div`
@@ -54,6 +61,12 @@ const SearchContainer = styled.div`
 
   .search-icon {
     color: #333;
+  }
+
+  @media (max-width: 425px) {
+    display: ${(props) => (props.showSearch ? 'block' : 'none')};
+    width: 100%;
+    margin-top: 0.5rem;
   }
 `;
 
