@@ -1,9 +1,9 @@
 import React from 'react';
 import { LuDog } from 'react-icons/lu';
-import { CiSearch } from 'react-icons/ci';
 import { FiUser } from 'react-icons/fi';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
+//import { CiSearch } from 'react-icons/ci'
 
 const Container = styled.div`
   display: flex;
@@ -44,31 +44,31 @@ const Logo = styled(Link)`
   text-decoration: none;
 `;
 
-const SearchContainer = styled.div`
-  display: flex;
-  align-items: center;
-  background-color: #fff;
-  border-radius: 5px;
-  padding: 5px 10px;
-  width: 300px;
+// const SearchContainer = styled.div`
+//   display: flex;
+//   align-items: center;
+//   background-color: #fff;
+//   border-radius: 5px;
+//   padding: 5px 10px;
+//   width: 300px;
 
-  input {
-    border: none;
-    outline: none;
-    width: 100%;
-    padding-left: 5px;
-  }
+//   input {
+//     border: none;
+//     outline: none;
+//     width: 100%;
+//     padding-left: 5px;
+//   }
 
-  .search-icon {
-    color: #333;
-  }
+//   .search-icon {
+//     color: #333;
+//   }
 
-  @media (max-width: 425px) {
-    display: ${(props) => (props.showSearch ? 'block' : 'none')};
-    width: 100%;
-    margin-top: 0.5rem;
-  }
-`;
+//   @media (max-width: 425px) {
+//     display: ${(props) => (props.showSearch ? 'block' : 'none')};
+//     width: 100%;
+//     margin-top: 0.5rem;
+//   }
+// `;
 
 const IconsContainer = styled.div`
   display: flex;
@@ -86,11 +86,11 @@ function Navbar() {
     <Container>
       <ContentWrapper>
         <StyledNavbar>
-          <Logo to='/'>Dog Snack</Logo>
-          <SearchContainer>
+          <Logo to='/'>Dog Snack Dictionary</Logo>
+          {/* <SearchContainer>
             <CiSearch className='search-icon' />
             <input type='text' placeholder='검색어를 입력해 주세요' />
-          </SearchContainer>
+          </SearchContainer> */}
           <IconsContainer>
             <LuDog className='icon' />
             <FiUser className='icon' />

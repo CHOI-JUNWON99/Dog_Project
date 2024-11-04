@@ -1,0 +1,15 @@
+@charset "utf-8";
+
+@font-face {
+  font-family: 'HMKMMAG';
+  src:
+    url('./assets/HMKMMAG.woff2') format('woff2'),
+    url('./assets/HMKMMAG.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+body {
+  font-family: 'HMKMMAG', sans-serif;
+  font-weight: normal;
+}

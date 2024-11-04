@@ -29,7 +29,9 @@ const StyledHealthPage = styled.div`
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding-bottom: 20px;
+  padding: 1rem;
+  padding-bottom: 60px;
+  margin-top: 10px;
 `;
 
 const SnackGrid = styled.div`
