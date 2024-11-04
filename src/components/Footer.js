@@ -26,6 +26,13 @@ const Container = styled.div`
   gap: 12px;
   transform: translateZ(0);
   padding-bottom: calc(env(safe-area-inset-bottom) + 0px);
+
+  @media (max-width: 425px) {
+    border-left: none;
+    border-right: none;
+    width: 100vw;
+    padding: 0;
+  }
 `;
 
 const StyledFooter = styled.div`

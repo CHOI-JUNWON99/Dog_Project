@@ -1,6 +1,6 @@
 import './App.css';
 import React from 'react';
-//import ReactDOM from 'react-dom'
+import './global.css';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import MainPage from './pages/MainPage';
 import Health from './pages/Health';

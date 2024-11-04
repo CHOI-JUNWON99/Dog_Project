@@ -1,5 +1,5 @@
 # Workflow
-name: Github Actions 실행시켜보기
+name: Github Actions 실행
 
 on:
   push:
@@ -46,6 +46,3 @@ jobs:
         run:
           aws cloudfront create-invalidation --distribution-id E27HZBOHMBCFR2
           --paths "/*"
-
-      - name: S3에 빌드된 파일 업로드하기
-        run: aws s3 cp ./build s3://dogsnackinfo/ --recursive
